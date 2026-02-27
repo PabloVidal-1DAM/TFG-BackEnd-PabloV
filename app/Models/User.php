@@ -46,4 +46,19 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // Un usuario (si es admin claro) puede crear MUCHOS productos.
+    public function productos(){
+        return $this->hasMany(Producto::class, 'user_id');
+    }
+
+    // Un usuario normal (cliente) puede hacer MUCHOS pedidos.
+    public function pedidos(){
+        return $this->hasMany(Producto::class, 'user_id');
+    }
+
+    // Un usuario normal (cliente) puede escribir MUCHAS reviews.
+    public function reviews(){
+        return $this->hasMany(Review::class, 'user_id');
+    }
 }
