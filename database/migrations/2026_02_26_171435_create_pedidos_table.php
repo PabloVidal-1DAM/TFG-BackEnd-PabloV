@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('pedidos', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->string('estado')->default('pendiente'); // No hay pasarela de pago, pero hasta que el usuario no confirme el pedido, no se pasará a enviar.
+            $table->decimal('total', 8,2); // Mismo rango que en 'productos'.
             $table->timestamps();
         });
     }
