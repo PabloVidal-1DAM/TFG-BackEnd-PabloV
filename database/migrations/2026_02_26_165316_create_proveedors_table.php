@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('proveedors', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('nombre');
             $table->string('cif', 9)->unique(); // Identifica fiscalmente a una empresa.
             $table->string('email')->nullable()->unique(); // El proveedor no está obligado a darlo para que lo vean todos.

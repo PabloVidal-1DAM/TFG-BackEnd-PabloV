@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('categorias', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('categoria_padre_id')->constrained('categoria_padres'); // Hace la relación de Categoría -> CategoriaPadre.
+            $table->uuid('id')->primary();
+            $table->foreignUuid('categoria_padre_id')->constrained('categoria_padres'); // Hace la relación de Categoría -> CategoriaPadre.
             $table->string('nombre')->unique();
             $table->string('descripcion')->nullable();
             $table->timestamps();

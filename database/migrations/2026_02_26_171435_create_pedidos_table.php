@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pedidos', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('estado')->default('pendiente'); // No hay pasarela de pago, pero hasta que el usuario no confirme el pedido, no se pasará a enviar.
             $table->decimal('total', 8,2); // Mismo rango que en 'productos'.

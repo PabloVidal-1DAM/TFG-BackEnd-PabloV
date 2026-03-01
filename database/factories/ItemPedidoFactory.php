@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Pedido;
+use App\Models\Producto;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,8 +18,14 @@ class ItemPedidoFactory extends Factory
      */
     public function definition(): array
     {
+        // Se obtiene un producto al azar para copiarle el precio en precio_historico
+        $producto = Producto::inRandomOrder()->first() ?? Producto::factory()->create();
+
         return [
-            //
+            'pedido_id' => Pedido::inRandomOrder()->value('id') ?? Pedido::factory(),
+            'producto_id' => $producto->id,
+            'cantidad' => $this->faker->numberBetween(1, 10),
+            'precio_historico' => $producto->precio, // Congelamos el precio actual del producto en caso de que cambie y las facturas antiguas se vean afectadas.
         ];
     }
 }

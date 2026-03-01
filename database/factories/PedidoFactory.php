@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,9 @@ class PedidoFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'user_id' => User::inRandomOrder()->value('id') ?? User::factory(),
+            'estado' => $this->faker->randomElement(['pendiente', 'pagado', 'enviado']),
+            'total' => $this->faker->randomFloat(2, 20, 2000),
         ];
     }
 }
