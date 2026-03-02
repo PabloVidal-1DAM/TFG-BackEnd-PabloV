@@ -13,7 +13,8 @@ class ProductoController extends Controller
      */
     public function index()
     {
-        //
+        $productos = Producto::with('categorias')->paginate(15);
+        return response()->json($productos);
     }
 
     /**
@@ -37,7 +38,9 @@ class ProductoController extends Controller
      */
     public function show(Producto $producto)
     {
-        //
+        $producto ->load(['categorias', 'proveedor']);
+
+        return response()->json($producto);
     }
 
     /**
@@ -61,6 +64,18 @@ class ProductoController extends Controller
      */
     public function destroy(Producto $producto)
     {
-        //
+        if(!$producto->delete()){
+            return response([
+                "error" => true,
+                "message" => "No se pudo eliminar el producto.",
+                "code" => 500
+            ], 500);
+        }else{
+            return response([
+                "error" => false,
+                "message" => "Se ha eliminado el producto correctamente.",
+                "code" => 200
+            ], 200);
+        }
     }
 }
