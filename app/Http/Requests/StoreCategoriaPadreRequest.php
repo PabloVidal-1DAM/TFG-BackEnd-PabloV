@@ -11,7 +11,7 @@ class StoreCategoriaPadreRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,8 @@ class StoreCategoriaPadreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'nombre' => 'required|string|max:255|unique:categoria_padres,nombre',
+            'descripcion' => 'nullable|string',
         ];
     }
 }

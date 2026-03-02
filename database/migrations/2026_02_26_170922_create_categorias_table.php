@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('categorias', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('categoria_padre_id')->constrained('categoria_padres'); // Hace la relación de Categoría -> CategoriaPadre.
+            $table->foreignUuid('categoria_padre_id')->constrained('categoria_padres')->onDelete('cascade'); // Hace la relación de Categoría -> CategoriaPadre.
             $table->string('nombre')->unique();
             $table->string('descripcion')->nullable();
             $table->timestamps();

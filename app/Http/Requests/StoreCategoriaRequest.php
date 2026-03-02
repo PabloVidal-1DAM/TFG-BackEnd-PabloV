@@ -11,7 +11,7 @@ class StoreCategoriaRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,10 @@ class StoreCategoriaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            // Se valida que se pasa un UUID válido y que dicha categoría padre existe en la BD.
+            'categoria_padre_id' => 'required|uuid|exists:categoria_padres,id',
+            'nombre' => 'required|string|max:255|unique:categorias,nombre',
+            'descripcion' => 'nullable|string',
         ];
     }
 }

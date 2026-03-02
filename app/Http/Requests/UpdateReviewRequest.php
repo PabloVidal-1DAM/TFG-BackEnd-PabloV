@@ -11,7 +11,7 @@ class UpdateReviewRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class UpdateReviewRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            // Al estar editando una review, no se deja cambiar el producto, solo la nota y el texto puestos.
+            'valoracion' => 'sometimes|required|integer|min:1|max:5',
+            'comentario' => 'nullable|string',
         ];
     }
 }

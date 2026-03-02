@@ -13,7 +13,9 @@ class CategoriaController extends Controller
      */
     public function index()
     {
-        //
+        // Se traen todas las categorías junto a la categoría padre que está afiliada y se paginan de 15 en 15.
+        $categorias = Categoria::with('categoriaPadre')->paginate(15);
+        return response()->json($categorias);
     }
 
     /**
@@ -29,7 +31,13 @@ class CategoriaController extends Controller
      */
     public function store(StoreCategoriaRequest $request)
     {
-        //
+        // Se obtienen los datos validados y se usan para crear una nueva categoría en la bd.
+        $categoria = Categoria::create($request->validated());
+
+        return response()->json([
+            'message' => 'Categoría creada con éxito',
+            'data' => $categoria->load('categoriaPadre')
+        ], 201);
     }
 
     /**
@@ -37,7 +45,8 @@ class CategoriaController extends Controller
      */
     public function show(Categoria $categoria)
     {
-        //
+        // Se devuelve, además de la categoria, la categoría padre a la que pertenece la que se rescata.
+        return response()->json($categoria->load('categoriaPadre'));
     }
 
     /**
@@ -53,7 +62,13 @@ class CategoriaController extends Controller
      */
     public function update(UpdateCategoriaRequest $request, Categoria $categoria)
     {
-        //
+        // Una vez validados los datos, se actualiza la categoria.
+        $categoria->update($request->validated());
+
+        return response()->json([
+            'message' => 'Categoría actualizada con éxito',
+            'data' => $categoria->load('categoriaPadre')
+        ], 200);
     }
 
     /**
@@ -61,6 +76,18 @@ class CategoriaController extends Controller
      */
     public function destroy(Categoria $categoria)
     {
-        //
+        if(!$categoria->delete()){
+            return response()->json([
+                "error" => true,
+                "message" => "No se pudo eliminar la categoria.",
+                "code" => 500
+            ], 500);
+        }else{
+            return response()->json([
+                "error" => false,
+                "message" => "Se ha eliminado la categoria correctamente.",
+                "code" => 200
+            ], 200);
+        }
     }
 }

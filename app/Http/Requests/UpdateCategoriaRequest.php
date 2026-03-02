@@ -11,7 +11,7 @@ class UpdateCategoriaRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,8 +21,13 @@ class UpdateCategoriaRequest extends FormRequest
      */
     public function rules(): array
     {
+        // se rescata el ID que se pone en la URL
+        $categoriaId = $this->route('categoria')->id;
+
         return [
-            //
+            'categoria_padre_id' => 'sometimes|required|uuid|exists:categoria_padres,id',
+            'nombre' => 'sometimes|required|string|max:255|unique:categorias,nombre,' . $categoriaId,
+            'descripcion' => 'nullable|string',
         ];
     }
 }

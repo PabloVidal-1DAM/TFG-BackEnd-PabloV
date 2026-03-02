@@ -11,7 +11,7 @@ class StoreReviewRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,10 @@ class StoreReviewRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            // El usuario debe indicar a qué producto le está haciendo la review, para evitar reviews fantasmas.
+            'producto_id' => 'required|uuid|exists:productos,id',
+            'valoracion' => 'required|integer|min:1|max:5',
+            'comentario' => 'nullable|string',
         ];
     }
 }

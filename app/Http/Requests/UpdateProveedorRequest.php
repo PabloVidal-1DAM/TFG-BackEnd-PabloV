@@ -11,7 +11,7 @@ class UpdateProveedorRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,8 +21,20 @@ class UpdateProveedorRequest extends FormRequest
      */
     public function rules(): array
     {
+        $proveedorId = $this->route('proveedor')->id;
+
         return [
-            //
+            'nombre' => 'sometimes|required|string|max:255',
+            'cif' => [
+                'sometimes',
+                'required',
+                'string',
+                'regex:/^[A-Za-z]\d{7}[A-Za-z0-9]$/',
+                'unique:proveedors,cif,' . $proveedorId
+            ],
+            'email' => 'sometimes|required|email|unique:proveedors,email,' . $proveedorId,
+            'telefono' => 'sometimes|required|string|max:20',
+            'direccion' => 'nullable|string',
         ];
     }
 }

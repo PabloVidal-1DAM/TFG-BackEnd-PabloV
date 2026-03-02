@@ -22,7 +22,18 @@ class StoreProductoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            // Se valida que el id del proveedor está puesto y que existe de verdad.
+            "proveedor_id" => "required|exists:proveedors,id",
+
+            "nombre" => "required|string|max:255|unique:productos,nombre",
+            "descripcion" => "nullable|string",
+            "precio" => "required|numeric|min:0",
+            "stock" => "required|integer|min:0",
+            "imagen_url" => "nullable|string",
+
+            // Validación de las categorías atribuidas al producto, se envían como un array de Uuids.
+            "categorias" => "required|array|min:1",
+            "categorias.*" => "uuid|exists:categorias,id"
         ];
     }
 }

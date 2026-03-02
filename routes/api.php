@@ -19,7 +19,11 @@ Route::get('/user', function (Request $request) {
    Route::apiResource('productos', ProductoController::class)->only(['index', 'show']);
 
 // Categorías (Para pintar el menú de navegación)
-   Route::apiResource('categorias', CategoriaController::class)->only(['index', 'show']);
+    Route::apiResource('categorias', CategoriaController::class)->parameters([
+        'categorias' => 'categoria'  // para que no intente adivinar la variable en singular, ya que me estaba dando errores.
+    ]);
+
+    Route::apiResource('reviews', ReviewController::class); // Ya es una palabra inglesa, por lo que no hace falta darle parametro de nombre singular.
 
 // Rutas que si necesitan de autentificación para usarse:
  Route::middleware('auth:sanctum')->group(function () {
@@ -29,10 +33,14 @@ Route::get('/user', function (Request $request) {
 
      // El usuario gestiona sus compras y opiniones
      Route::apiResource('pedidos', PedidoController::class);
-     Route::apiResource('reviews', ReviewController::class);
+     // Aquí va reviews una vez dejes de testear.
 
      // Panel interno de administración
-     Route::apiResource('proveedores', ProveedorController::class);
-     Route::apiResource('categoria-padres', CategoriaPadreController::class);
+     Route::apiResource('proveedores', ProveedorController::class)->parameters([
+         'proveedores' => 'proveedor'
+     ]);
+     Route::apiResource('categoria-padres', CategoriaPadreController::class)->parameters([
+         'categoria-padres' => 'categoriaPadre'
+     ]);
 
  });

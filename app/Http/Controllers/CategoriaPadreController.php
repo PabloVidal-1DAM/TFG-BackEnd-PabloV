@@ -13,7 +13,8 @@ class CategoriaPadreController extends Controller
      */
     public function index()
     {
-        //
+        $categorias = CategoriaPadre::paginate(15);
+        return response()->json($categorias);
     }
 
     /**
@@ -29,7 +30,13 @@ class CategoriaPadreController extends Controller
      */
     public function store(StoreCategoriaPadreRequest $request)
     {
-        //
+        // Se obtienen los datos ya validados y se usan para crear una nueva categoría padre.
+        $categoriaPadre = CategoriaPadre::create($request->validated());
+
+        return response()->json([
+            'message' => 'Categoría Padre creada con éxito',
+            'data' => $categoriaPadre
+        ], 201);
     }
 
     /**
@@ -37,7 +44,7 @@ class CategoriaPadreController extends Controller
      */
     public function show(CategoriaPadre $categoriaPadre)
     {
-        //
+        return response()->json($categoriaPadre);
     }
 
     /**
@@ -53,7 +60,13 @@ class CategoriaPadreController extends Controller
      */
     public function update(UpdateCategoriaPadreRequest $request, CategoriaPadre $categoriaPadre)
     {
-        //
+        // Siempre y cuando los datos sean válidos se actualiza la categoría padre.
+        $categoriaPadre->update($request->validated());
+
+        return response()->json([
+            'message' => 'Categoría Padre actualizada con éxito',
+            'data' => $categoriaPadre
+        ], 200);
     }
 
     /**
@@ -61,6 +74,18 @@ class CategoriaPadreController extends Controller
      */
     public function destroy(CategoriaPadre $categoriaPadre)
     {
-        //
+        if(!$categoriaPadre->delete()){
+            return response()->json([
+                "error" => true,
+                "message" => "No se pudo eliminar la categoría padre.",
+                "code" => 500
+            ], 500);
+        }else{
+            return response()->json([
+                "error" => false,
+                "message" => "Se ha eliminado la categoría padre correctamente.",
+                "code" => 200
+            ], 200);
+        }
     }
 }

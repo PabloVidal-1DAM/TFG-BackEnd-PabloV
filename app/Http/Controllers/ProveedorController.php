@@ -13,7 +13,8 @@ class ProveedorController extends Controller
      */
     public function index()
     {
-        //
+        $proveedores = Proveedor::paginate(15);
+        return response()->json($proveedores);
     }
 
     /**
@@ -29,7 +30,13 @@ class ProveedorController extends Controller
      */
     public function store(StoreProveedorRequest $request)
     {
-        //
+        // Se usan los datos ya validados para crear un nuevo Proveedor en la base de datos.
+        $proveedor = Proveedor::create($request->validated());
+
+        return response()->json([
+            'message' => 'Proveedor creado con éxito',
+            'data' => $proveedor
+        ], 201);
     }
 
     /**
@@ -37,7 +44,7 @@ class ProveedorController extends Controller
      */
     public function show(Proveedor $proveedor)
     {
-        //
+        return response()->json($proveedor);
     }
 
     /**
@@ -53,7 +60,13 @@ class ProveedorController extends Controller
      */
     public function update(UpdateProveedorRequest $request, Proveedor $proveedor)
     {
-        //
+        // Si los datos pasados son válidos se actualiza el proveedor.
+        $proveedor->update($request->validated());
+
+        return response()->json([
+            'message' => 'Proveedor actualizado con éxito',
+            'data' => $proveedor
+        ], 200);
     }
 
     /**
@@ -61,6 +74,18 @@ class ProveedorController extends Controller
      */
     public function destroy(Proveedor $proveedor)
     {
-        //
+        if(!$proveedor->delete()){
+            return response()->json([
+                "error" => true,
+                "message" => "No se pudo eliminar el proveedor.",
+                "code" => 500
+            ], 500);
+        }else{
+            return response()->json([
+                "error" => false,
+                "message" => "Se ha eliminado el proveedor correctamente.",
+                "code" => 200
+            ], 200);
+        }
     }
 }
