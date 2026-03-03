@@ -4,14 +4,14 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdatePedidoRequest extends FormRequest
+class LoginUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,8 @@ class UpdatePedidoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'estado' => 'sometimes|string|in:pendiente,enviado,entregado'
+            "email" => "required|email|exists:users",
+            "password" => "required|string|min:6"
         ];
     }
 }
