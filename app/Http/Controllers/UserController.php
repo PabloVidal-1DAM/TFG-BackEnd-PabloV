@@ -15,9 +15,10 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(ShowUserRequest $request)
     {
-        //
+        $usuarios = User::paginate(15);
+        return response()->json($usuarios);
     }
 
     /**

@@ -24,7 +24,6 @@ class PermissionSeeder extends Seeder
         Permission::create(["name" => "crear-review"]); // Para crear una review sobre un producto | lo hace el Cliente.
         Permission::create(["name" => "administrar-review"]); // Para editar campos de esta o borrarla | puede tanto El Cliente como El Admin.
 
-        Permission::create(["name" => "ver-usuarios"]);
         Permission::create(["name" => "ver-usuario"]);
     }
 }

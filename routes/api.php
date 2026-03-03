@@ -33,6 +33,7 @@ Route::post('/user', [UserController::class, 'store']);
      Route::get('/user/logout', [UserController::class, 'logout']);
      //Obtener un usuario en concreto.
      Route::get('/user/{user}', [UserController::class, 'show']);
+     Route::get('/users', [UserController::class, 'index']);
 
      // Gestión del catálogo (Crear, editar, borrar productos)
      Route::apiResource('productos', ProductoController::class)->except(['index', 'show']);

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class UpdateCategoriaRequest extends FormRequest
 {
@@ -11,7 +12,15 @@ class UpdateCategoriaRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $user = Auth::user();
+
+        // Si no es Admin, no puede modificar una categoria de la BD.
+        if ($user->hasRole('admin')) {
+            return true;
+        }
+
+        // Si tiene el permiso "gestionar-catalogo" también puede hacer esta acción.
+        return $user->hasPermissionTo('gestionar-catalogo');
     }
 
     /**
