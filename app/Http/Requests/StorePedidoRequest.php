@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class StorePedidoRequest extends FormRequest
 {
@@ -11,7 +12,8 @@ class StorePedidoRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $user = Auth::user();
+        return $user->hasRole('usuario'); // Solo el usuario puede crear pedidos.
     }
 
     /**

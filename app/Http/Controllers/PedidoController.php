@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ShowPedidoRequest;
 use App\Models\Pedido;
 use App\Models\Producto;
 use App\Models\User;
 use App\Models\ItemPedido;
 use App\Http\Requests\StorePedidoRequest;
 use App\Http\Requests\UpdatePedidoRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class PedidoController extends Controller
@@ -15,7 +17,7 @@ class PedidoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(ShowPedidoRequest $request)
     {
         // Traemos los pedidos con los datos del usuario que lo hace y los productos que contiene cada pedido.
         $pedidos = Pedido::with(['user', 'items.producto'])->paginate(15);
@@ -35,9 +37,9 @@ class PedidoController extends Controller
      */
     public function store(StorePedidoRequest $request)
     {
-        // 1. Se crea el pedido a coste cero inicialmente.
+        // Se crea el pedido a coste cero inicialmente.
         $pedido = Pedido::create([
-            'user_id' => User::first()->id, // Temporal
+            'user_id' => Auth::user()->id,
             'estado' => 'pendiente',
             'total' => 0
         ]);
@@ -73,7 +75,7 @@ class PedidoController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Pedido $pedido)
+    public function show(ShowPedidoRequest $request, Pedido $pedido)
     {
         // traemos al usuario, los ítems del pedido, y el producto de cada ítem
         $pedido->load(['user', 'items.producto']);

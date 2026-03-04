@@ -11,7 +11,14 @@ class UpdatePedidoRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        $user = $this->user();
+
+        if ($user->hasRole('admin')) { // solo el usuario puede editar los pedidos ya creados.
+            return true;
+        }
+
+        // Si existiera un rol futuro que tenga este permiso, también podría hacer esta acción.
+        return $user->hasPermissionTo('gestionar-pedido');
     }
 
     /**

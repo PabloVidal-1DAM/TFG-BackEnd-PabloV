@@ -14,15 +14,16 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Se crean los usuarios (10 Clientes y 1 Admin).
-        User::factory(10)->create()->each(function($user) {
-            $user->assignRole('usuario');
-        });
-
+        // Se crean los usuarios (1 Admin y 10 Clientes).
         User::create([
             "nombre"=>'PabloAdmin',
             "email"=>"admin@tetrabios.com",
             "password"=>Hash::make('123456')
         ])->assignRole('admin');
+
+
+        User::factory(10)->create()->each(function($user) {
+            $user->assignRole('usuario');
+        });
     }
 }

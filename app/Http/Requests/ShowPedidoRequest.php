@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateReviewRequest extends FormRequest
+class ShowPedidoRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -12,15 +12,16 @@ class UpdateReviewRequest extends FormRequest
     public function authorize(): bool
     {
         $user = $this->user();
-        $review = $this->route('review'); // Se obtiene la Review que se pasa por la URL.
+        $pedido = $this->route('pedido'); // Se obtiene de la BD el pedido que se pide desde la URL
 
-        // El admin puede editar cualquier review par hacer trabajo de moderación.
+        // El Admin lo ve todo
         if ($user->hasRole('admin')) {
             return true;
         }
 
-        // El cliente solo puede editar SU PROPIA review.
-        if ($user->hasPermissionTo('administrar-review') && $review->user_id === $user->id) {
+        // El Cliente solo ve SU propio pedido
+        // Para ello Debe tener permiso 'ver-mis-pedidos' Y ser el dueño del pedido.
+        if ($user->hasPermissionTo('ver-mis-pedidos') && $pedido->user_id === $user->id) {
             return true;
         }
 
@@ -35,9 +36,7 @@ class UpdateReviewRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // Al estar editando una review, no se deja cambiar el producto, solo la nota y el texto puestos.
-            'valoracion' => 'sometimes|required|integer|min:1|max:5',
-            'comentario' => 'nullable|string',
+            //
         ];
     }
 }

@@ -6,6 +6,7 @@ use App\Http\Requests\StoreReviewRequest;
 use App\Http\Requests\UpdateReviewRequest;
 use App\Models\Review;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class ReviewController extends Controller
 {
@@ -35,8 +36,8 @@ class ReviewController extends Controller
         // Se validan los datos pasados.
         $datosValidados = $request->validated();
 
-        // se le asigna al campo del id de usuario el que ha iniciado sesión en ese momento.
-        $datosValidados['user_id'] = User::first()->id;
+        // Se le asigna al campo del id de usuario el que ha iniciado sesión en ese momento.
+        $datosValidados['user_id'] = Auth::user()->id;
 
         // Ahora si, con esos datos se crea una review nueva en la BD.
         $review = Review::create($datosValidados);
