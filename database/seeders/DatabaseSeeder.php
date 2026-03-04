@@ -18,15 +18,15 @@ class DatabaseSeeder extends Seeder
             // Roles y Permisos antes que nada
             PermissionSeeder::class,
             RoleSeeder::class,
-            UserSeeder::class,       // Usuarios (Admin ID 1 + 10 Clientes)
+            UserSeeder::class,
 
-            // 2. Luego el catálogo
+            // Luego el catálogo
             ProveedorSeeder::class,
             CategoriaPadreSeeder::class,
             CategoriaSeeder::class,
             ProductoSeeder::class,
 
-            // 3. Finalmente las interacciones (que usarán los usuarios del paso 1)
+            // Finalmente las interacciones (que usarán los usuarios del paso 1)
             PedidoSeeder::class,
             ItemPedidoSeeder::class,
             ReviewSeeder::class,

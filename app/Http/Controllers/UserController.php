@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginUserRequest;
 use App\Http\Requests\ShowUserRequest;
+use App\Http\Requests\ShowUsersRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -15,7 +16,7 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(ShowUserRequest $request)
+    public function index(ShowUsersRequest $request)
     {
         $usuarios = User::paginate(15);
         return response()->json($usuarios);

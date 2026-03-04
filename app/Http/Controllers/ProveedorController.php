@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DeleteProveedorRequest;
 use App\Http\Requests\StoreProveedorRequest;
 use App\Http\Requests\UpdateProveedorRequest;
 use App\Models\Proveedor;
@@ -72,7 +73,7 @@ class ProveedorController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Proveedor $proveedor)
+    public function destroy(DeleteProveedorRequest $request, Proveedor $proveedor)
     {
         if(!$proveedor->delete()){
             return response()->json([

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DeletePedidoRequest;
 use App\Http\Requests\ShowPedidoRequest;
+use App\Http\Requests\ShowPedidosRequest;
 use App\Models\Pedido;
 use App\Models\Producto;
 use App\Models\User;
@@ -17,11 +19,21 @@ class PedidoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(ShowPedidoRequest $request)
+    public function index(ShowPedidosRequest $request)
     {
-        // Traemos los pedidos con los datos del usuario que lo hace y los productos que contiene cada pedido.
-        $pedidos = Pedido::with(['user', 'items.producto'])->paginate(15);
-        return response()->json($pedidos);
+        // EL request valida si el usuario tiene permiso para hacer la acción o no.
+        $user = $request->user();
+
+        // Se traen los Pedidos junto al usuario que lo crea y los productos que tiene dentro.
+        $query = \App\Models\Pedido::with(['user', 'items.producto']);
+
+        // // Si el que ha hecho el request es cliente, solo ve SUS pedidos.
+        if (!$user->hasRole('admin')) {
+            $query->where('user_id', $user->id);
+        }
+
+        // Se devuelve el resultado paginado de 15 en 15.
+        return response()->json($query->paginate(15));
     }
 
     /**
@@ -59,7 +71,7 @@ class PedidoController extends Controller
                 'pedido_id' => $pedido->id,
                 'producto_id' => $producto->id,
                 'cantidad' => $item['cantidad'],
-                'precio_unitario' => $producto->precio
+                'precio_historico' => $producto->precio
             ]);
         }
 
@@ -96,12 +108,12 @@ class PedidoController extends Controller
      */
     public function update(UpdatePedidoRequest $request, Pedido $pedido)
     {
-        // 1. La barrera de seguridad: Si ya está enviado o entregado, bloqueamos la acción.
-        if ($pedido->estado === 'enviado' || $pedido->estado === 'entregado') {
+        // La barrera de seguridad: Si ya está entregado, se bloquea la acción.
+        if ($pedido->estado === 'entregado') {
             return response()->json([
                 'error' => true,
-                'message' => 'No se pueden modificar los datos de un pedido que ya ha sido enviado.'
-            ], 403); // 403 significa Prohibido
+                'message' => 'No se pueden modificar los datos de un pedido que ya ha sido entregado.'
+            ], 403);
         }
 
         // 2. Si pasa la barrera, actualizamos el pedido
@@ -116,7 +128,7 @@ class PedidoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Pedido $pedido)
+    public function destroy( DeletePedidoRequest $request, Pedido $pedido)
     {
         if(!$pedido->delete()){
             return response()->json([

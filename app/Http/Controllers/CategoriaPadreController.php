@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DeleteCategoriaPadreRequest;
 use App\Http\Requests\StoreCategoriaPadreRequest;
 use App\Http\Requests\UpdateCategoriaPadreRequest;
 use App\Models\CategoriaPadre;
@@ -72,7 +73,7 @@ class CategoriaPadreController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(CategoriaPadre $categoriaPadre)
+    public function destroy(DeleteCategoriaPadreRequest $request, CategoriaPadre $categoriaPadre)
     {
         if(!$categoriaPadre->delete()){
             return response()->json([

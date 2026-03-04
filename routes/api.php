@@ -21,7 +21,7 @@ Route::post('/user', [UserController::class, 'store']);
    Route::apiResource('productos', ProductoController::class)->only(['index', 'show']);
 
 // Categorías (Para pintar el menú de navegación)
-    Route::apiResource('categorias', CategoriaController::class)->parameters([
+    Route::apiResource('categorias', CategoriaController::class)->only('index', 'show')->parameters([
         'categorias' => 'categoria'  // para que no intente adivinar la variable en singular, ya que me estaba dando errores.
     ]);
 
@@ -34,6 +34,10 @@ Route::post('/user', [UserController::class, 'store']);
      //Obtener un usuario en concreto.
      Route::get('/user/{user}', [UserController::class, 'show']);
      Route::get('/users', [UserController::class, 'index']);
+
+     Route::apiResource('categorias', CategoriaController::class)->except('index', 'show')->parameters([
+         'categorias' => 'categoria'  // para que no intente adivinar la variable en singular, ya que me estaba dando errores.
+     ]);
 
      // Gestión del catálogo (Crear, editar, borrar productos)
      Route::apiResource('productos', ProductoController::class)->except(['index', 'show']);

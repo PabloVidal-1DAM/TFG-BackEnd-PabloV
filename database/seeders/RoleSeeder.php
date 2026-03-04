@@ -26,6 +26,7 @@ class RoleSeeder extends Seeder
             'ver-catalogo',
             'hacer-pedido',
             'ver-mis-pedidos',
+            'ver-usuario',
             'crear-review',
             'administrar-review' // Puede editar sus propias reviews solo.
         ]);

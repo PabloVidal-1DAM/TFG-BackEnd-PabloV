@@ -19,7 +19,7 @@ class PedidoFactory extends Factory
     {
         return [
             'user_id' => User::inRandomOrder()->first()->id,
-            'estado' => $this->faker->randomElement(['pendiente', 'pagado', 'enviado']),
+            'estado' => $this->faker->randomElement(['pendiente', 'enviado', 'entregado']),
             'total' => $this->faker->randomFloat(2, 20, 2000),
         ];
     }
