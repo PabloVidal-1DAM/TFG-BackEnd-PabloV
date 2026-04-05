@@ -26,7 +26,7 @@ class DeleteReviewRequest extends FormRequest
             return true;
         }
 
-        // 3. Si no es admin y la review no es suya, portazo en las narices
+        // Si no es admin y la review no es suya, no deja hacer la acción
         return false;
     }
 
