@@ -14,7 +14,10 @@ class ProductoController extends Controller
      */
     public function index()
     {
-        $productos = Producto::with('categorias')->paginate(9);
+        $productos = Producto::with('categorias')
+                             ->withAvg('reviews', 'valoracion')
+                             ->withCount('reviews')
+                             ->paginate(9);
         return response()->json($productos);
     }
 

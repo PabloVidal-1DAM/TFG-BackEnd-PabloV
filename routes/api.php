@@ -20,6 +20,8 @@ Route::post('/user', [UserController::class, 'store']);
 // Catálogo de productos (Solo para consultar: index y show)
    Route::apiResource('productos', ProductoController::class)->only(['index', 'show']);
 
+    Route::apiResource('reviews', ReviewController::class)->only(['index', 'show']);
+
 // Categorías (Para pintar el menú de navegación)
     Route::apiResource('categorias', CategoriaController::class)->only('index', 'show')->parameters([
         'categorias' => 'categoria'  // para que no intente adivinar la variable en singular, ya que me estaba dando errores.
@@ -44,7 +46,7 @@ Route::post('/user', [UserController::class, 'store']);
 
      // El usuario gestiona sus compras y opiniones
      Route::apiResource('pedidos', PedidoController::class);
-     Route::apiResource('reviews', ReviewController::class); // Ya es una palabra inglesa, por lo que no hace falta darle parametro de nombre singular.
+     Route::apiResource('reviews', ReviewController::class)->except(['index', 'show']); // Ya es una palabra inglesa, por lo que no hace falta darle parametro de nombre singular.
 
      // Panel interno de administración
      Route::apiResource('proveedores', ProveedorController::class)->parameters([
