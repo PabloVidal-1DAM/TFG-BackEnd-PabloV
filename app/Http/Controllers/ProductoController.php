@@ -110,4 +110,21 @@ class ProductoController extends Controller
             ], 200);
         }
     }
+
+    public function destacados()
+    {
+        // 1. with('categorias') -> Para pintar las etiquetas verdes en React
+        // 2. withCount('itemsPedido') -> Usa el nombre EXACTO de tu función en el modelo
+        // 3. orderByDesc('items_pedido_count') -> Laravel convierte "itemsPedido" a "items_pedido_count" automáticamente
+        // 4. take(3) -> Nos quedamos con los 3 más vendidos
+        // 5. get() -> Obtenemos los resultados (sin paginar)
+
+        $productos = Producto::with('categorias')
+            ->withCount('itemsPedido')
+            ->orderByDesc('items_pedido_count')
+            ->take(3)
+            ->get();
+
+        return response()->json($productos);
+    }
 }

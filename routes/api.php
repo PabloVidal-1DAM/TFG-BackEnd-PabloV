@@ -16,11 +16,12 @@ Route::post('/user/login', [UserController::class, 'verify']);
 Route::post('/user', [UserController::class, 'store']);
 
 // Rutas que no requieren autentificación para usarse:
+Route::get('/productos/destacados', [ProductoController::class, 'destacados']);
 
 // Catálogo de productos (Solo para consultar: index y show)
-   Route::apiResource('productos', ProductoController::class)->only(['index', 'show']);
+Route::apiResource('productos', ProductoController::class)->only(['index', 'show']);
 
-    Route::apiResource('reviews', ReviewController::class)->only(['index', 'show']);
+Route::apiResource('reviews', ReviewController::class)->only(['index', 'show']);
 
 // Categorías (Para pintar el menú de navegación)
     Route::apiResource('categorias', CategoriaController::class)->only('index', 'show')->parameters([
