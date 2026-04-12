@@ -57,8 +57,14 @@ class ProductoController extends Controller
      */
     public function show(Producto $producto)
     {
-        // Además de los productos, se cargan las categorias que tiene y los proveedores a los que pertenece para mostrarlos.
-        $producto ->load(['categorias', 'proveedor']);
+        // 1. Añadimos 'reviews.user' para traernos las reseñas y el autor de cada una
+        $producto->load(['categorias', 'proveedor', 'reviews.user']);
+
+        // 2. Calculamos la media de las estrellas (creará el campo reviews_avg_valoracion)
+        $producto->loadAvg('reviews', 'valoracion');
+
+        // 3. Calculamos el total de reseñas (creará el campo reviews_count)
+        $producto->loadCount('reviews');
 
         return response()->json($producto);
     }
