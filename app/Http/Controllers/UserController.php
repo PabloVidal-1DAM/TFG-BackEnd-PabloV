@@ -41,10 +41,14 @@ class UserController extends Controller
                 "message" => "Error al crear el usuario en la BD."
             ], 500);
         }else{
+            // Se crea el token directamente al registrarse
+            $token = $usuario->createToken('auth-token')->plainTextToken;
+
             return response()->json([
                 "error" => false,
-                "message" => "Usuario creado correctamente.",
-                "data" => $usuario
+                "message" => "Usuario creado y logueado correctamente.",
+                "user" => $usuario, // <--- Para que React lo lea
+                "token" => $token   // <--- El token de sesión
             ], 201);
         }
     }
@@ -91,6 +95,7 @@ class UserController extends Controller
             return response()->json([
                 "error" => false,
                 "message" => "Usuario autenticado correctamente.",
+                "user" => $usuario,
                 "token" => $token,
                 "token_type" => "Bearer",
                 "rol" => $roles
@@ -99,18 +104,15 @@ class UserController extends Controller
     }
 
     public function logout(Request $request){
-        // Se obtiene el usuario logeado en la sesión y se elimina su token de sesión.
-        $user = Auth::user();
-        if(!$user->tokens()->delete()){
-            return response()->json([
-                "error" => true,
-                "message" => "No se ha podido cerrar sesión del usuario."
-            ], 500);
-        }else{
-            return response()->json([
-                "error" => false,
-                "message" => "Sesión cerrada correctamente."
-            ], 200);
-        }
+        // $request->user() obtiene el usuario usando el token que nos manda React
+        $user = $request->user();
+
+        // Elimina ÚNICAMENTE el token de esta sesión/dispositivo
+        $user->currentAccessToken()->delete();
+
+        return response()->json([
+            "error" => false,
+            "message" => "Sesión cerrada correctamente."
+        ], 200);
     }
 }

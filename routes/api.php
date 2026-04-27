@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 //Login de Usuario
 Route::post('/user/login', [UserController::class, 'verify']);
 // Registro de Usuario
-Route::post('/user', [UserController::class, 'store']);
+Route::post('/user/register', [UserController::class, 'store']);
 
 // Rutas que no requieren autentificación para usarse:
 Route::get('/productos/destacados', [ProductoController::class, 'destacados']);
