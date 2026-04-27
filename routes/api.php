@@ -33,7 +33,7 @@ Route::apiResource('reviews', ReviewController::class)->only(['index', 'show']);
 
      // Rutas de Usuario:
      // Deslogear a Usuario, ya tiene que existir una sesión para hacerse, como es obvio.
-     Route::get('/user/logout', [UserController::class, 'logout']);
+     Route::post('/user/logout', [UserController::class, 'logout']);
      //Obtener un usuario en concreto.
      Route::get('/user/{user}', [UserController::class, 'show']);
      Route::get('/users', [UserController::class, 'index']);
