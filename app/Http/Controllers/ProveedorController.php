@@ -45,7 +45,7 @@ class ProveedorController extends Controller
      */
     public function show(Proveedor $proveedor)
     {
-        return response()->json($proveedor);
+        return response()->json($proveedor->load('productos'));
     }
 
     /**
