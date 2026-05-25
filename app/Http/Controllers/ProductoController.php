@@ -12,12 +12,48 @@ class ProductoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(\Illuminate\Http\Request $request) // Inyectamos el Request
     {
-        $productos = Producto::with('categorias')
-                             ->withAvg('reviews', 'valoracion')
-                             ->withCount('reviews')
-                             ->paginate(9);
+        // 1. Iniciamos la consulta base con tus relaciones y contadores calcados
+        $query = Producto::with('categorias')
+            ->withAvg('reviews', 'valoracion')
+            ->withCount('reviews');
+
+        // 2. Filtro de búsqueda por Nombre
+        $query->when($request->query('buscar'), function ($q, $buscar) {
+            $q->where('nombre', 'like', '%' . $buscar . '%');
+        });
+
+        // 3. Filtro por Categoría
+        // (Entra en la tabla intermedia/pivote si se recibe el ID de categoría)
+        $query->when($request->query('categoria'), function ($q, $categoria) {
+            $q->whereHas('categorias', function ($q2) use ($categoria) {
+                $q2->where('categorias.id', $categoria);
+            });
+        });
+
+        // 4. Lógica de Ordenación Dinámica
+        $orden = $request->query('orden');
+        if ($orden === 'precio_asc') {
+            $query->orderBy('precio', 'asc');
+        } elseif ($orden === 'precio_desc') {
+            $query->orderBy('precio', 'desc');
+        } elseif ($orden === 'nombre_asc') {
+            $query->orderBy('nombre', 'asc');
+        } elseif ($orden === 'nombre_desc') {
+            $query->orderBy('nombre', 'desc');
+        } else {
+            // Por defecto, u orden de inserción si no viene parámetro
+            $query->orderBy('created_at', 'desc');
+        }
+
+        // 5. Ejecutamos la paginación de 9 elementos que tenías configurada.
+        // El método ->appends() acopla los filtros a los botones del paginador.
+        $productos = $query->paginate(9)->appends($request->query());
+
         return response()->json($productos);
     }
 
