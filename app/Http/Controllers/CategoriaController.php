@@ -14,8 +14,9 @@ class CategoriaController extends Controller
      */
     public function index()
     {
-        // Se traen todas las categorías junto a la categoría padre que está afiliada y se paginan de 15 en 15.
-        $categorias = Categoria::with('categoriaPadre')->paginate(15);
+        // Se traen TODAS las categorías sin paginar, ideal para rellenar los selectores (filtros, menús...)
+        $categorias = Categoria::with('categoriaPadre')->orderBy('nombre', 'asc')->get();
+
         return response()->json($categorias);
     }
 

@@ -93,8 +93,8 @@ class ProductoController extends Controller
      */
     public function show(Producto $producto)
     {
-        // 1. Añadimos 'reviews.user' para traernos las reseñas y el autor de cada una
-        $producto->load(['categorias', 'proveedor', 'reviews.user']);
+        // CAMBIO AQUÍ: Añadimos .categoriaPadre a 'categorias'
+        $producto->load(['categorias.categoriaPadre', 'proveedor', 'reviews.user']);
 
         // 2. Calculamos la media de las estrellas (creará el campo reviews_avg_valoracion)
         $producto->loadAvg('reviews', 'valoracion');
