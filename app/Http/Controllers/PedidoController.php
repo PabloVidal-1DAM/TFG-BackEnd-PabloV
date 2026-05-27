@@ -32,8 +32,8 @@ class PedidoController extends Controller
             $query->where('user_id', $user->id);
         }
 
-        // Se devuelve el resultado paginado de 15 en 15.
-        return response()->json($query->paginate(15));
+        // Se devuelve el resultado completo ordenado por los más recientes.
+        return response()->json($query->orderByDesc('created_at')->get());
     }
 
     /**
