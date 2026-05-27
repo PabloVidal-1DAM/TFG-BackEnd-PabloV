@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreReviewRequest extends FormRequest
 {
@@ -22,10 +23,27 @@ class StoreReviewRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // El usuario debe indicar a qué producto le está haciendo la review, para evitar reviews fantasmas.
-            'producto_id' => 'required|uuid|exists:productos,id',
+            // Validamos que exista y que sea ÚNICO para este usuario en concreto
+            'producto_id' => [
+                'required',
+                'uuid',
+                'exists:productos,id',
+                Rule::unique('reviews')->where(function ($query) {
+                    return $query->where('user_id', $this->user()->id);
+                })
+            ],
             'valoracion' => 'required|integer|min:1|max:5',
             'comentario' => 'nullable|string',
+        ];
+    }
+
+    /**
+     * Get custom messages for validator errors.
+     */
+    public function messages(): array
+    {
+        return [
+            'producto_id.unique' => 'Ya has publicado una reseña para este producto. Si deseas cambiarla, edita la que ya tienes.',
         ];
     }
 }
