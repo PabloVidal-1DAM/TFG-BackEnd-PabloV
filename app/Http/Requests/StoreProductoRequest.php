@@ -38,7 +38,7 @@ class StoreProductoRequest extends FormRequest
             "descripcion" => "nullable|string",
             "precio" => "required|numeric|min:0",
             "stock" => "required|integer|min:0",
-            "imagen_url" => "nullable|string",
+            "imagen" => "nullable|image|mimes:jpeg,png,jpg,webp|max:2048",
 
             // Validación de las categorías atribuidas al producto, se envían como un array de Uuids.
             "categorias" => "required|array|min:1",
