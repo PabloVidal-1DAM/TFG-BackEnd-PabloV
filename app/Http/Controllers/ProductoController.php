@@ -73,8 +73,16 @@ class ProductoController extends Controller
         // Se obtienen los datos ya validados.
         $datosValidados = $request->validated();
 
-        // Para el campo del id que crea el producto, se le asigna el que ha iniciado sesion.
-        $datosValidados['user_id'] = \App\Models\User::first()->id;
+        // CORRECCIÓN: Se le asigna al admin que ha hecho la petición (el que ha iniciado sesión)
+        $datosValidados['user_id'] = $request->user()->id;
+
+        // LO QUE FALTABA: Lógica para interceptar y guardar la imagen física
+        if ($request->hasFile('imagen')) {
+            // Guarda la imagen en storage/app/public/productos y nos devuelve la ruta generada
+            $rutaImagen = $request->file('imagen')->store('productos', 'public');
+            // Metemos esa ruta en el array para que se guarde en la B.D.
+            $datosValidados['imagen_url'] = $rutaImagen;
+        }
 
         // Se crea el producto en la b.d
         $producto = Producto::create($datosValidados);
