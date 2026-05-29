@@ -163,13 +163,14 @@ class ProductoController extends Controller
 
     public function destacados()
     {
-        // 1. with('categorias') -> Para pintar las etiquetas verdes en React
-        // 2. withCount('itemsPedido') -> Usa el nombre EXACTO de tu función en el modelo
-        // 3. orderByDesc('items_pedido_count') -> Laravel convierte "itemsPedido" a "items_pedido_count" automáticamente
-        // 4. take(3) -> Nos quedamos con los 3 más vendidos
-        // 5. get() -> Obtenemos los resultados (sin paginar)
+        // 1. with('categorias') -> Para pintar las etiquetas verdes
+        // 2. withAvg y withCount -> Para que las estrellas funcionen igual que en el catálogo
+        // 3. withCount('itemsPedido') -> Para saber lo más vendido
+        // 4. orderByDesc y take(3) -> Ordenamos y nos quedamos con el Top 3
 
         $productos = Producto::with('categorias')
+            ->withAvg('reviews', 'valoracion') // <-- Añadido: Media de estrellas
+            ->withCount('reviews')             // <-- Añadido: Total de comentarios
             ->withCount('itemsPedido')
             ->orderByDesc('items_pedido_count')
             ->take(3)
