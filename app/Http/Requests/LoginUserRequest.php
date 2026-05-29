@@ -11,7 +11,7 @@ class LoginUserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return true; // Cualquier persona (incluso sin sesión) puede intentar loguearse
     }
 
     /**
@@ -22,8 +22,25 @@ class LoginUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "email" => "required|email|exists:users",
+            "email" => "required|email|exists:users,email", // Añado ',email' por seguridad
             "password" => "required|string|min:6"
+        ];
+    }
+
+    /**
+     * Custom messages para los errores de validación en español.
+     */
+    public function messages(): array
+    {
+        return [
+            // Errores del Email
+            'email.required' => 'El correo electrónico es obligatorio.',
+            'email.email' => 'Debes introducir un correo electrónico válido.',
+            'email.exists' => 'Esta cuenta no existe. Por favor, regístrate.',
+
+            // Errores de la Contraseña
+            'password.required' => 'La contraseña es obligatoria para iniciar sesión.',
+            'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
         ];
     }
 }
