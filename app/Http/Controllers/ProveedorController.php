@@ -45,7 +45,15 @@ class ProveedorController extends Controller
      */
     public function show(Proveedor $proveedor)
     {
-        return response()->json($proveedor->load('productos'));
+        // Cargamos los productos del proveedor, pero le inyectamos
+        // las categorías y los cálculos de las reviews exactamente igual que en el catálogo.
+        $proveedor->load(['productos' => function ($query) {
+            $query->with('categorias')
+                ->withAvg('reviews', 'valoracion')
+                ->withCount('reviews');
+        }]);
+
+        return response()->json($proveedor);
     }
 
     /**
