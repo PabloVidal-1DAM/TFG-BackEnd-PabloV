@@ -52,7 +52,9 @@ class ProductoController extends Controller
 
         // 5. Ejecutamos la paginación de 9 elementos que tenías configurada.
         // El método ->appends() acopla los filtros a los botones del paginador.
-        $productos = $query->paginate(9)->appends($request->query());
+        $perPage = $request->query('per_page', 9);
+
+        $productos = $query->paginate($perPage)->appends($request->query());
 
         return response()->json($productos);
     }
