@@ -31,6 +31,10 @@ Route::apiResource('reviews', ReviewController::class)->only(['index', 'show']);
 // Rutas que si necesitan de autentificación para usarse:
  Route::middleware('auth:sanctum')->group(function () {
 
+     Route::get('/user', function (Request $request) {
+         return $request->user()->load('roles');
+     });
+
      // Rutas de Usuario:
      // Deslogear a Usuario, ya tiene que existir una sesión para hacerse, como es obvio.
      Route::get('/user/logout', [UserController::class, 'logout']);
