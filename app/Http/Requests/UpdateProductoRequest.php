@@ -52,7 +52,7 @@ class UpdateProductoRequest extends FormRequest
             "descripcion" => "nullable|string",
             "precio" => "sometimes|required|numeric|min:0",
             "stock" => "sometimes|required|integer|min:0",
-            "imagen_url" => "nullable|string",
+            "imagen" => "nullable|image|mimes:jpeg,png,jpg,webp|max:2048",
 
             "categorias" => "sometimes|required|array|min:1",
             "categorias.*" => "uuid|exists:categorias,id"

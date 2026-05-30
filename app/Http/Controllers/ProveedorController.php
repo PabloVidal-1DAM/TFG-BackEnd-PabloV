@@ -12,9 +12,14 @@ class ProveedorController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(\Illuminate\Http\Request $request)
     {
-        $proveedores = Proveedor::paginate(15);
+        // Leemos el per_page de la URL (por defecto 15 si no viene)
+        $perPage = $request->query('per_page', 15);
+
+        // Paginamos dinámicamente
+        $proveedores = Proveedor::orderBy('created_at', 'desc')->paginate($perPage);
+
         return response()->json($proveedores);
     }
 

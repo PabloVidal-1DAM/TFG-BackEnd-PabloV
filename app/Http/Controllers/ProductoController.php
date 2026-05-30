@@ -6,6 +6,7 @@ use App\Http\Requests\DeleteProductoRequest;
 use App\Http\Requests\StoreProductoRequest;
 use App\Http\Requests\UpdateProductoRequest;
 use App\Models\Producto;
+use Illuminate\Support\Facades\Storage;
 
 class ProductoController extends Controller
 {
@@ -128,10 +129,28 @@ class ProductoController extends Controller
      */
     public function update(UpdateProductoRequest $request, Producto $producto)
     {
-        // Se actualizan los datos que son más básicos de la tabla productos al ser validados.
-        $producto->update($request->validated());
+        // Cogemos los datos (nombre, precio, stock...)
+        $datosValidados = $request->validated();
 
-        // En categorias, si los datos enviados incluyen más, se añaden al array junto a las antiguas.
+        // 2. CORRECCIÓN: Comprobamos si el frontend ha enviado una nueva imagen física
+        if ($request->hasFile('imagen')) {
+
+            // Borramos la imagen antigua del servidor para no acumular basura
+            if ($producto->imagen_url) {
+                Storage::disk('public')->delete($producto->imagen_url);
+            }
+
+            // Guardamos la nueva imagen en storage/app/public/productos
+            $rutaImagen = $request->file('imagen')->store('productos', 'public');
+
+            // Le decimos a Laravel que guarde esa ruta generada en la columna de la BD
+            $datosValidados['imagen_url'] = $rutaImagen;
+        }
+
+        // Se actualizan los datos del producto (incluyendo la nueva ruta de la imagen si se subió)
+        $producto->update($datosValidados);
+
+        // Se sincronizan las categorías
         if($request->has('categorias')){
             $producto->categorias()->sync($request->categorias);
         }
@@ -139,7 +158,7 @@ class ProductoController extends Controller
         return response()->json([
             "message" => "Producto actualizado con éxito",
             "data" => $producto->load(["categorias", "proveedor"]),
-            "code" => 500
+            "code" => 200 // Lo he cambiado a 200, que antes tenías 500 escrito aquí por error
         ], 200);
     }
 
@@ -148,6 +167,10 @@ class ProductoController extends Controller
      */
     public function destroy(DeleteProductoRequest $request, Producto $producto)
     {
+        // 1. Guardamos la ruta de la imagen ANTES de borrar el producto
+        $rutaImagen = $producto->imagen_url;
+
+        // 2. Intentamos borrar el producto de la base de datos
         if(!$producto->delete()){
             return response()->json([
                 "error" => true,
@@ -155,9 +178,14 @@ class ProductoController extends Controller
                 "code" => 500
             ], 500);
         }else{
+            // 3. ¡LA MAGIA! Si se borró bien de la BD y tenía una imagen, la borramos del disco
+            if ($rutaImagen) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($rutaImagen);
+            }
+
             return response()->json([
                 "error" => false,
-                "message" => "Se ha eliminado el producto correctamente.",
+                "message" => "Se ha eliminado el producto y su imagen correctamente.",
                 "code" => 200
             ], 200);
         }
