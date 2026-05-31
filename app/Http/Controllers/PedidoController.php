@@ -21,19 +21,18 @@ class PedidoController extends Controller
      */
     public function index(ShowPedidosRequest $request)
     {
-        // EL request valida si el usuario tiene permiso para hacer la acción o no.
         $user = $request->user();
-
-        // Se traen los Pedidos junto al usuario que lo crea y los productos que tiene dentro.
         $query = \App\Models\Pedido::with(['user', 'items.producto']);
 
-        // // Si el que ha hecho el request es cliente, solo ve SUS pedidos.
         if (!$user->hasRole('admin')) {
             $query->where('user_id', $user->id);
         }
 
-        // Se devuelve el resultado completo ordenado por los más recientes.
-        return response()->json($query->orderByDesc('created_at')->get());
+        // Leemos el per_page de la URL (por defecto 15 si no viene)
+        $perPage = $request->query('per_page', 15);
+
+        // Se devuelve el resultado paginado y ordenado por los más recientes.
+        return response()->json($query->orderByDesc('created_at')->paginate($perPage));
     }
 
     /**

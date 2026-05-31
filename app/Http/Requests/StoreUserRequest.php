@@ -21,12 +21,19 @@ class StoreUserRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $reglas = [
             "nombre" => "required|string|max:255",
-            "email" => "required|email|unique:users", // unique:users es el que comprueba si ya existe
+            "email" => "required|email|unique:users",
             "telefono" => "nullable|string|max:255",
             "password" => "required|string|min:6"
         ];
+
+        // Solo si el que hace la petición tiene sesión iniciada y es Admin, validamos el rol
+        if ($this->user() && $this->user()->hasRole('admin')) {
+            $reglas['rol'] = "sometimes|required|string|exists:roles,name";
+        }
+
+        return $reglas;
     }
 
     /**

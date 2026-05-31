@@ -16,9 +16,11 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(ShowUsersRequest $request)
+    public function index(\Illuminate\Http\Request $request)
     {
-        $usuarios = User::paginate(15);
+        $perPage = $request->query('per_page', 15);
+        // with('roles') es clave para que React sepa si es admin o usuario y poder cambiarlo en la vista de administración.
+        $usuarios = User::with('roles')->orderBy('created_at', 'desc')->paginate($perPage);
         return response()->json($usuarios);
     }
 
@@ -28,12 +30,10 @@ class UserController extends Controller
     public function store(StoreUserRequest $request)
     {
         $datosValidados = $request->validated();
-
-        // Se encripta la contraseña antes de guardar el usuario en la BD
         $datosValidados['password'] = Hash::make($request->password);
 
-        // Automáticamente al crear un usuario se le añade el rol de usuario base.
-        $usuario = User::create($datosValidados)->assignRole('usuario');
+        // Creamos el usuario
+        $usuario = User::create($datosValidados);
 
         if(!$usuario){
             return response()->json([
@@ -41,14 +41,18 @@ class UserController extends Controller
                 "message" => "Error al crear el usuario en la BD."
             ], 500);
         }else{
-            // Se crea el token directamente al registrarse
+            // Si el Request trae un 'rol' (lo cual solo es posible si eres admin),
+            // se le asigna, si no, se le da el rol 'usuario' por defecto.
+            $rol = $request->has('rol') ? $request->rol : 'usuario';
+            $usuario->assignRole($rol);
+
             $token = $usuario->createToken('auth-token')->plainTextToken;
 
             return response()->json([
                 "error" => false,
-                "message" => "Usuario creado y logueado correctamente.",
-                "user" => $usuario, // <--- Para que React lo lea
-                "token" => $token   // <--- El token de sesión
+                "message" => "Usuario creado correctamente.",
+                "user" => $usuario,
+                "token" => $token
             ], 201);
         }
     }
@@ -66,7 +70,33 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        //
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            // OJO: Hay que ignorar el ID del usuario actual para que le deje guardar su propio email
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'telefono' => 'nullable|string|max:255',
+            'rol' => 'required|string|exists:roles,name'
+        ]);
+
+        $user->nombre = $request->nombre;
+        $user->email = $request->email;
+        $user->telefono = $request->telefono;
+
+        // Si el admin escribió una contraseña nueva, la encriptamos y la guardamos
+        if ($request->filled('password')) {
+            $request->validate(['password' => 'string|min:6']);
+            $user->password = Hash::make($request->password);
+        }
+
+        $user->save();
+
+        // Actualizamos su rol con Spatie Permission
+        $user->syncRoles([$request->rol]);
+
+        return response()->json([
+            "message" => "Usuario actualizado con éxito",
+            "data" => $user->load('roles')
+        ], 200);
     }
 
     /**
@@ -74,7 +104,17 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        //
+        if(!$user->delete()){
+            return response()->json([
+                "error" => true,
+                "message" => "No se pudo eliminar el usuario."
+            ], 500);
+        }
+
+        return response()->json([
+            "error" => false,
+            "message" => "Usuario eliminado correctamente."
+        ], 200);
     }
 
     public function verify(LoginUserRequest $request){

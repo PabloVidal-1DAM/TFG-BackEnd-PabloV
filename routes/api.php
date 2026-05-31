@@ -38,9 +38,9 @@ Route::apiResource('reviews', ReviewController::class)->only(['index', 'show']);
      // Rutas de Usuario:
      // Deslogear a Usuario, ya tiene que existir una sesión para hacerse, como es obvio.
      Route::get('/user/logout', [UserController::class, 'logout']);
-     //Obtener un usuario en concreto.
-     Route::get('/user/{user}', [UserController::class, 'show']);
-     Route::get('/users', [UserController::class, 'index']);
+
+     // CRUD completo de usuarios
+     Route::apiResource('users', UserController::class);
 
      Route::apiResource('categorias', CategoriaController::class)->except('index', 'show')->parameters([
          'categorias' => 'categoria'  // para que no intente adivinar la variable en singular, ya que me estaba dando errores.

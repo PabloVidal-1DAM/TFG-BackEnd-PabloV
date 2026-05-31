@@ -14,10 +14,10 @@ class ReviewController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(\Illuminate\Http\Request $request)
     {
-        // Se traen todas las reviews, junto al usuario y el producto que han valorado, y se pagina el resultado de 15 en 15.
-        $reviews = Review::with(['user', 'producto'])->paginate(15);
+        $perPage = $request->query('per_page', 15);
+        $reviews = Review::with(['user', 'producto'])->orderBy('created_at', 'desc')->paginate($perPage);
         return response()->json($reviews);
     }
 
