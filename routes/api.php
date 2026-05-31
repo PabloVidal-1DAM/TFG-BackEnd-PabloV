@@ -7,6 +7,7 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -60,5 +61,8 @@ Route::apiResource('reviews', ReviewController::class)->only(['index', 'show']);
      Route::apiResource('categoria-padres', CategoriaPadreController::class)->parameters([
          'categoria-padres' => 'categoriaPadre'
      ]);
+
+     // Resumen de los datos más importantes de las entidades para la sección de Resumen en el panel admin.
+     Route::get('/admin/resumen', [DashboardController::class, 'resumen']);
 
  });
