@@ -23,7 +23,7 @@ class StoreReviewRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // Validamos que exista y que sea ÚNICO para este usuario en concreto
+            // Valido que exista el id del producto y que sea ÚNICO para este usuario en concreto
             'producto_id' => [
                 'required',
                 'uuid',

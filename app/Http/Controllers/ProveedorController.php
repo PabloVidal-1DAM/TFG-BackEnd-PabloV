@@ -14,10 +14,10 @@ class ProveedorController extends Controller
      */
     public function index(\Illuminate\Http\Request $request)
     {
-        // Leemos el per_page de la URL (por defecto 15 si no viene)
+        // Leeo el per_page de la URL (por defecto 15 si no viene)
         $perPage = $request->query('per_page', 15);
 
-        // Paginamos dinámicamente
+        // Pagino dinámicamente según dicte el front
         $proveedores = Proveedor::orderBy('created_at', 'desc')->paginate($perPage);
 
         return response()->json($proveedores);
@@ -50,7 +50,7 @@ class ProveedorController extends Controller
      */
     public function show(Proveedor $proveedor)
     {
-        // Cargamos los productos del proveedor, pero le inyectamos
+        // Cargamos los productos del proveedor, pero le inyecto
         // las categorías y los cálculos de las reviews exactamente igual que en el catálogo.
         $proveedor->load(['productos' => function ($query) {
             $query->with('categorias')

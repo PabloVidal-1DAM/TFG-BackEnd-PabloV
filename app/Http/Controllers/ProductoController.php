@@ -16,9 +16,9 @@ class ProductoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(\Illuminate\Http\Request $request) // Inyectamos el Request
+    public function index(\Illuminate\Http\Request $request)
     {
-        // 1. Iniciamos la consulta base con tus relaciones y contadores calcados
+        // 1. Se Inicia la consulta base con las relaciones y contadores para las reviews
         $query = Producto::with('categorias')
             ->withAvg('reviews', 'valoracion')
             ->withCount('reviews');
@@ -51,7 +51,7 @@ class ProductoController extends Controller
             $query->orderBy('created_at', 'desc');
         }
 
-        // 5. Ejecutamos la paginación de 9 elementos que tenías configurada.
+        // Ejecutamos la paginación de 9 elementos que tenías configurada.
         // El método ->appends() acopla los filtros a los botones del paginador.
         $perPage = $request->query('per_page', 9);
 
@@ -76,14 +76,14 @@ class ProductoController extends Controller
         // Se obtienen los datos ya validados.
         $datosValidados = $request->validated();
 
-        // CORRECCIÓN: Se le asigna al admin que ha hecho la petición (el que ha iniciado sesión)
+        // Se le asigna al admin que ha hecho la petición (el que ha iniciado sesión)
         $datosValidados['user_id'] = $request->user()->id;
 
-        // LO QUE FALTABA: Lógica para interceptar y guardar la imagen física
+        // Lógica para interceptar y guardar la imagen física en el storage
         if ($request->hasFile('imagen')) {
-            // Guarda la imagen en storage/app/public/productos y nos devuelve la ruta generada
+            // Guarda la imagen en storage/app/public/productos y devuelve la ruta generada
             $rutaImagen = $request->file('imagen')->store('productos', 'public');
-            // Metemos esa ruta en el array para que se guarde en la B.D.
+            // Finalmente se usa el nombre de la ruta para que se guarde en la B.D y la referencia en el frontend correctamente.
             $datosValidados['imagen_url'] = $rutaImagen;
         }
 
@@ -104,13 +104,13 @@ class ProductoController extends Controller
      */
     public function show(Producto $producto)
     {
-        // CAMBIO AQUÍ: Añadimos .categoriaPadre a 'categorias'
+        // Añado.categoriaPadre a 'categorias'
         $producto->load(['categorias.categoriaPadre', 'proveedor', 'reviews.user']);
 
-        // 2. Calculamos la media de las estrellas (creará el campo reviews_avg_valoracion)
+        // Se calcula la media de las estrellas (creará el campo reviews_avg_valoracion)
         $producto->loadAvg('reviews', 'valoracion');
 
-        // 3. Calculamos el total de reseñas (creará el campo reviews_count)
+        // Calcula  el total de reseñas (creará el campo reviews_count)
         $producto->loadCount('reviews');
 
         return response()->json($producto);
@@ -129,21 +129,21 @@ class ProductoController extends Controller
      */
     public function update(UpdateProductoRequest $request, Producto $producto)
     {
-        // Cogemos los datos (nombre, precio, stock...)
+        // Se cogen los datos de la petición y se validan
         $datosValidados = $request->validated();
 
-        // 2. CORRECCIÓN: Comprobamos si el frontend ha enviado una nueva imagen física
+        // Comprueba si el frontend ha enviado una nueva imagen física
         if ($request->hasFile('imagen')) {
 
-            // Borramos la imagen antigua del servidor para no acumular basura
+            // Se borra la imagen antigua del servidor para no acumular basura
             if ($producto->imagen_url) {
                 Storage::disk('public')->delete($producto->imagen_url);
             }
 
-            // Guardamos la nueva imagen en storage/app/public/productos
+            // Guarda la nueva imagen en storage/app/public/productos
             $rutaImagen = $request->file('imagen')->store('productos', 'public');
 
-            // Le decimos a Laravel que guarde esa ruta generada en la columna de la BD
+            // Se le dice a Laravel que guarde esa ruta generada en la columna de la BD para ese producto
             $datosValidados['imagen_url'] = $rutaImagen;
         }
 
@@ -158,7 +158,7 @@ class ProductoController extends Controller
         return response()->json([
             "message" => "Producto actualizado con éxito",
             "data" => $producto->load(["categorias", "proveedor"]),
-            "code" => 200 // Lo he cambiado a 200, que antes tenías 500 escrito aquí por error
+            "code" => 200
         ], 200);
     }
 
@@ -167,10 +167,10 @@ class ProductoController extends Controller
      */
     public function destroy(DeleteProductoRequest $request, Producto $producto)
     {
-        // 1. Guardamos la ruta de la imagen ANTES de borrar el producto
+        // Se guarda la ruta de la imagen ANTES de borrar el producto
         $rutaImagen = $producto->imagen_url;
 
-        // 2. Intentamos borrar el producto de la base de datos
+        // Luego, se intenta borrar el producto de la base de datos
         if(!$producto->delete()){
             return response()->json([
                 "error" => true,
@@ -178,7 +178,7 @@ class ProductoController extends Controller
                 "code" => 500
             ], 500);
         }else{
-            // 3. ¡LA MAGIA! Si se borró bien de la BD y tenía una imagen, la borramos del disco
+            // Si se borró bien el producto de la BD y tenía una imagen, la borramos del storage de laravel
             if ($rutaImagen) {
                 \Illuminate\Support\Facades\Storage::disk('public')->delete($rutaImagen);
             }
@@ -199,8 +199,8 @@ class ProductoController extends Controller
         // 4. orderByDesc y take(3) -> Ordenamos y nos quedamos con el Top 3
 
         $productos = Producto::with('categorias')
-            ->withAvg('reviews', 'valoracion') // <-- Añadido: Media de estrellas
-            ->withCount('reviews')             // <-- Añadido: Total de comentarios
+            ->withAvg('reviews', 'valoracion')
+            ->withCount('reviews')
             ->withCount('itemsPedido')
             ->orderByDesc('items_pedido_count')
             ->take(3)

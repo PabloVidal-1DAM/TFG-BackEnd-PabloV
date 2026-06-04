@@ -20,12 +20,11 @@ class DashboardController extends Controller
         $totalUsuarios = User::count();
         $totalPedidos = Pedido::count();
 
-        // Asumimos que los pedidos cancelados no suman dinero (si tuvieras ese estado)
         $ingresosTotales = Pedido::sum('total');
         $ticketMedio = Pedido::avg('total') ?? 0;
 
         $pedidosPendientes = Pedido::where('estado', 'pendiente')->count();
-        $productosBajoStock = Producto::where('stock', '<', 20)->count(); // Aviso si quedan menos de 20
+        $productosBajoStock = Producto::where('stock', '<', 20)->count(); // Da un Aviso si quedan menos de 20 en stock
 
         // Se Agrupan los pedidos por su estado de entrega para mostrar un gráfico en el frontend.
         $pedidosPorEstado = Pedido::selectRaw('estado, COUNT(*) as cantidad')

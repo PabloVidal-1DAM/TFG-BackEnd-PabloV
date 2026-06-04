@@ -12,27 +12,27 @@ class RoleAndUserSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Permisos
+        // Permisos
         $permisos = ['gestionar-catalogo', 'ver-catalogo', 'hacer-pedido', 'ver-mis-pedidos', 'ver-usuario', 'crear-review', 'administrar-review'];
         foreach ($permisos as $permiso) {
             Permission::firstOrCreate(['name' => $permiso]);
         }
 
-        // 2. Roles
+        // Roles
         $rolAdmin = Role::firstOrCreate(['name' => 'admin']);
         $rolUsuario = Role::firstOrCreate(['name' => 'usuario']);
 
         $rolAdmin->givePermissionTo(Permission::all());
         $rolUsuario->givePermissionTo(['ver-catalogo', 'hacer-pedido', 'ver-mis-pedidos', 'ver-usuario', 'crear-review', 'administrar-review']);
 
-        // 3. Admin
+        // Admin
         $admin = User::firstOrCreate(
             ['email' => 'admin@tetrabios.com'],
             ['nombre' => 'Administrador TetraBIOS', 'password' => Hash::make('12345678A@'), 'telefono' => '600123456']
         );
         $admin->assignRole($rolAdmin);
 
-        // 4. Clientes Variados
+        // Clientes falsos
         $nombresClientes = ['EcoCliente Prueba', 'María Sostenible', 'Carlos Recicla', 'BioTienda Madrid', 'Laura Green'];
 
         foreach ($nombresClientes as $index => $nombre) {

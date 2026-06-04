@@ -32,15 +32,13 @@ class UpdateProductoRequest extends FormRequest
     public function rules(): array
     {
         // Se saca el ID del producto que se pasa desde la URL.
-        // OJO: Si usas Route Model Binding, esto devuelve el objeto y le sacas el ->id.
-        // Si no, devuelve directamente el string (UUID). Asumimos que lo tienes bien como objeto:
         $producto = $this->route('producto');
         $productoId = is_object($producto) ? $producto->id : $producto;
 
         return [
             "proveedor_id" => "sometimes|required|exists:proveedors,id",
 
-            // 2. CORRECCIÓN: Cambiamos a formato array para poder usar Rule::unique()->ignore()
+            // Se cambia a formato array para poder usar Rule::unique()->ignore()
             "nombre" => [
                 "sometimes",
                 "required",

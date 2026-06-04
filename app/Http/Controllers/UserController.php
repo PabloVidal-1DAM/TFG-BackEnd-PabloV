@@ -32,7 +32,7 @@ class UserController extends Controller
         $datosValidados = $request->validated();
         $datosValidados['password'] = Hash::make($request->password);
 
-        // Creamos el usuario
+        // Se crea el usuario
         $usuario = User::create($datosValidados);
 
         if(!$usuario){
@@ -90,7 +90,7 @@ class UserController extends Controller
 
         $user->save();
 
-        // Actualizamos su rol con Spatie Permission
+        // Actualizo su rol con Spatie Permission
         $user->syncRoles([$request->rol]);
 
         return response()->json([
@@ -144,7 +144,7 @@ class UserController extends Controller
     }
 
     public function logout(Request $request){
-        // $request->user() obtiene el usuario usando el token que nos manda React
+        // $request->user() obtiene el usuario usando el token que manda React
         $user = $request->user();
 
         // Elimina ÚNICAMENTE el token de esta sesión/dispositivo

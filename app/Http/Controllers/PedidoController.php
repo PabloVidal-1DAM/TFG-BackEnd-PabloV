@@ -28,7 +28,7 @@ class PedidoController extends Controller
             $query->where('user_id', $user->id);
         }
 
-        // Leemos el per_page de la URL (por defecto 15 si no viene)
+        // Se lee el per_page de la URL (por defecto 15 si no viene)
         $perPage = $request->query('per_page', 15);
 
         // Se devuelve el resultado paginado y ordenado por los más recientes.
@@ -57,7 +57,7 @@ class PedidoController extends Controller
 
         $sumaTotal = 0;
 
-        // 2. Se recorre el array de productos que tenga el pedido para calcular el precio total.
+        // Se recorre el array de productos que tenga el pedido para calcular el precio total.
         foreach ($request->items as $item) {
             $producto = Producto::findOrFail($item['producto_id']);
 
@@ -74,7 +74,7 @@ class PedidoController extends Controller
             ]);
         }
 
-        // 3. Se actualiza el pedido con el precio total ya calculado.
+        // Se actualiza el pedido con el precio total ya calculado.
         $pedido->update(['total' => $sumaTotal]);
 
         return response()->json([
@@ -107,7 +107,7 @@ class PedidoController extends Controller
      */
     public function update(UpdatePedidoRequest $request, Pedido $pedido)
     {
-        // La barrera de seguridad: Si ya está entregado, se bloquea la acción.
+        // Si un pedido ya está entregado, se bloquea la acción.
         if ($pedido->estado === 'entregado') {
             return response()->json([
                 'error' => true,
@@ -115,7 +115,7 @@ class PedidoController extends Controller
             ], 403);
         }
 
-        // 2. Si pasa la barrera, actualizamos el pedido
+        // Si pasa la barrera, se actualiza el pedido
         $pedido->update($request->validated());
 
         return response()->json([

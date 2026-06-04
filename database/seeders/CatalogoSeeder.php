@@ -15,45 +15,37 @@ class CatalogoSeeder extends Seeder
     {
         $admin = User::role('admin')->first();
 
-        // --- 1. PROVEEDORES (3 Existentes + 3 Nuevos) ---
+        // Proveedores Falsos
         $provEcoCarton = Proveedor::firstOrCreate(['cif' => 'B12345678'], ['nombre' => 'EcoCartón Ibérica', 'email' => 'distribucion@ecocarton.es', 'telefono' => '910111222', 'direccion' => 'Polígono Industrial Sur, Madrid']);
         $provTetraPack = Proveedor::firstOrCreate(['cif' => 'B87654321'], ['nombre' => 'Sostenibles Tetra SL', 'email' => 'ventas@sosteniblestetra.com', 'telefono' => '930112233', 'direccion' => 'Parque Tecnológico, Barcelona']);
         $provBioEmbalajes = Proveedor::firstOrCreate(['cif' => 'B11223344'], ['nombre' => 'BioEmbalajes Europe', 'email' => 'info@bioembalajes.eu', 'telefono' => '960334455', 'direccion' => 'Zona Franca, Valencia']);
-
-        // Nuevos
         $provCartonajes = Proveedor::firstOrCreate(['cif' => 'A55667788'], ['nombre' => 'Cartonajes Sostenibles S.A.', 'email' => 'contacto@cartonajessostenibles.es', 'telefono' => '910555666', 'direccion' => 'Polígono Norte, Sevilla']);
         $provGreenPack = Proveedor::firstOrCreate(['cif' => 'B99887766'], ['nombre' => 'GreenPack Solutions', 'email' => 'sales@greenpack.com', 'telefono' => '930888777', 'direccion' => 'Bilbao, Vizcaya']);
         $provNaturaBrik = Proveedor::firstOrCreate(['cif' => 'B11122233'], ['nombre' => 'NaturaBrik Global', 'email' => 'hello@naturabrik.com', 'telefono' => '960111222', 'direccion' => 'Málaga, Andalucía']);
 
-        // --- 2. CATEGORÍAS PADRE (2 Existentes + 2 Nuevas) ---
+        // Categorías Padre Falsas
         $catPadreEnvases = CategoriaPadre::firstOrCreate(['nombre' => 'Envases TetraBrik']);
         $catPadreComplementos = CategoriaPadre::firstOrCreate(['nombre' => 'Complementos de Cartón']);
         $catPadreVajilla = CategoriaPadre::firstOrCreate(['nombre' => 'Vajilla Ecológica']);
         $catPadreOficina = CategoriaPadre::firstOrCreate(['nombre' => 'Oficina y Diseño']);
 
-        // --- 3. SUBCATEGORÍAS ---
+        // Subcategorías Falsas
         $catBebidas = Categoria::firstOrCreate(['nombre' => 'Bebidas y Zumos'], ['categoria_padre_id' => $catPadreEnvases->id, 'descripcion' => 'Envases asépticos ideales para líquidos.']);
         $catAlimentacion = Categoria::firstOrCreate(['nombre' => 'Caldos y Sopas'], ['categoria_padre_id' => $catPadreEnvases->id, 'descripcion' => 'Formatos resistentes a la temperatura.']);
-
         $catPajitas = Categoria::firstOrCreate(['nombre' => 'Pajitas Ecológicas'], ['categoria_padre_id' => $catPadreComplementos->id, 'descripcion' => 'Pajitas de cartón biodegradable.']);
         $catEmbalaje = Categoria::firstOrCreate(['nombre' => 'Embalaje de Envío'], ['categoria_padre_id' => $catPadreComplementos->id, 'descripcion' => 'Cajas de cartón reciclado adaptadas.']);
         $catTapones = Categoria::firstOrCreate(['nombre' => 'Tapones y Cierres'], ['categoria_padre_id' => $catPadreComplementos->id, 'descripcion' => 'Cierres de bioplástico vegetal.']);
-
         $catVasos = Categoria::firstOrCreate(['nombre' => 'Vasos de Cartón'], ['categoria_padre_id' => $catPadreVajilla->id, 'descripcion' => 'Vasos térmicos y normales biodegradables.']);
         $catBandejas = Categoria::firstOrCreate(['nombre' => 'Bandejas y Platos'], ['categoria_padre_id' => $catPadreVajilla->id, 'descripcion' => 'Vajilla desechable 100% libre de plásticos.']);
-
         $catLibretas = Categoria::firstOrCreate(['nombre' => 'Cuadernos Reciclados'], ['categoria_padre_id' => $catPadreOficina->id, 'descripcion' => 'Papel y tapas procedentes de briks reciclados.']);
         $catOrganizadores = Categoria::firstOrCreate(['nombre' => 'Organizadores Automontables'], ['categoria_padre_id' => $catPadreOficina->id, 'descripcion' => 'Mobiliario de escritorio hecho en cartón rígido.']);
 
-        // --- 4. PRODUCTOS (15 Artículos con chicha) ---
+        // Productos falsos con chicha
         $productos = [
-            // Los 4 originales
             ['proveedor_id' => $provTetraPack->id, 'user_id' => $admin->id, 'nombre' => 'Envase TetraBrik 1L (Pack 1000 ud)', 'descripcion' => 'El formato clásico de 1 litro. Fabricado con un 75% de cartón procedente de bosques certificados FSC.', 'precio' => 120.50, 'stock' => 50, 'imagen_url' => 'productos/brik_1litro.jpg', 'categorias' => [$catBebidas->id]],
             ['proveedor_id' => $provTetraPack->id, 'user_id' => $admin->id, 'nombre' => 'TetraBrik Caldos 500ml (Pack 500 ud)', 'descripcion' => 'Envase compacto diseñado específicamente para caldos y sopas. Interior reforzado.', 'precio' => 85.00, 'stock' => 120, 'imagen_url' => 'productos/brik_caldo500.jpg', 'categorias' => [$catAlimentacion->id]],
             ['proveedor_id' => $provEcoCarton->id, 'user_id' => $admin->id, 'nombre' => 'Pajitas de Cartón Bio (Caja 5000 ud)', 'descripcion' => 'Pajitas de papel kraft natural, resistentes a los líquidos. Biodegradables y compostables.', 'precio' => 35.90, 'stock' => 200, 'imagen_url' => 'productos/pajitas_carton.jpg', 'categorias' => [$catPajitas->id]],
             ['proveedor_id' => $provBioEmbalajes->id, 'user_id' => $admin->id, 'nombre' => 'Caja Transporte para Briks 1L (Pack 50 ud)', 'descripcion' => 'Caja de cartón ondulado reciclado diseñada para almacenar hasta 12 TetraBriks.', 'precio' => 42.00, 'stock' => 80, 'imagen_url' => 'productos/caja_transporte.jpg', 'categorias' => [$catEmbalaje->id]],
-
-            // 11 Nuevos productos
             ['proveedor_id' => $provGreenPack->id, 'user_id' => $admin->id, 'nombre' => 'Vaso Cartón Café 250ml (Caja 1000 ud)', 'descripcion' => 'Vasos de cartón de pared simple ideales para café espresso y cortado. No queman al tacto.', 'precio' => 24.50, 'stock' => 300, 'imagen_url' => 'productos/vaso_cafe.jpg', 'categorias' => [$catVasos->id]],
             ['proveedor_id' => $provGreenPack->id, 'user_id' => $admin->id, 'nombre' => 'Vaso Doble Pared Té 400ml (Caja 500 ud)', 'descripcion' => 'Vasos térmicos de doble pared de cartón ondulado. Mantienen el calor del té y evitan quemaduras.', 'precio' => 32.00, 'stock' => 150, 'imagen_url' => 'productos/vaso_te.jpg', 'categorias' => [$catVasos->id]],
             ['proveedor_id' => $provCartonajes->id, 'user_id' => $admin->id, 'nombre' => 'Platos Biodegradables 20cm (Pack 500 ud)', 'descripcion' => 'Platos llanos de pulpa de cartón reciclado, muy rígidos y resistentes a salsas y cortes.', 'precio' => 45.90, 'stock' => 100, 'imagen_url' => 'productos/plato_carton.jpg', 'categorias' => [$catBandejas->id]],
@@ -71,7 +63,6 @@ class CatalogoSeeder extends Seeder
             $categoriasArr = $prodData['categorias'];
             unset($prodData['categorias']);
 
-            // Usamos firstOrCreate para evitar duplicados si lanzas el seeder varias veces
             $producto = Producto::firstOrCreate(['nombre' => $prodData['nombre']], $prodData);
             $producto->categorias()->sync($categoriasArr);
         }

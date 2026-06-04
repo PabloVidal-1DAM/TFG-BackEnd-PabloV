@@ -28,7 +28,7 @@ class StoreUserRequest extends FormRequest
             "password" => "required|string|min:6"
         ];
 
-        // Solo si el que hace la petición tiene sesión iniciada y es Admin, validamos el rol
+        // Solo si el que hace la petición tiene sesión iniciada y es Admin, le puede poner un rol y por tanto se valida el rol
         if ($this->user() && $this->user()->hasRole('admin')) {
             $reglas['rol'] = "sometimes|required|string|exists:roles,name";
         }

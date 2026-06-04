@@ -16,10 +16,10 @@ class ActividadSeeder extends Seeder
         $clientes = User::role('usuario')->get();
         $productos = Producto::all();
 
-        // Si no hay clientes o productos, no hacemos nada
+        // Si no hay clientes o productos, no se hace nada.
         if ($clientes->isEmpty() || $productos->isEmpty()) return;
 
-        // 1. GENERAR RESEÑAS
+        // Plantilla para generar reseñas falsas.
         $comentarios = [
             '¡Excelente calidad! Lo recomiendo totalmente para mi negocio.',
             'Muy buen material, aunque el envío tardó un poco.',
@@ -29,7 +29,7 @@ class ActividadSeeder extends Seeder
         ];
 
         foreach ($productos as $producto) {
-            // Cogemos 2 o 3 clientes aleatorios para opinar sobre cada producto
+            // Se cogen 2 o 3 clientes aleatorios para opinar sobre cada producto
             $clientesOpinan = $clientes->random(rand(2, 3));
 
             foreach ($clientesOpinan as $cliente) {
@@ -43,7 +43,7 @@ class ActividadSeeder extends Seeder
             }
         }
 
-        // 2. GENERAR PEDIDOS
+        // Generación de pedidos
         foreach ($clientes as $cliente) {
             // Cada cliente hace 1 o 2 pedidos
             $numPedidos = rand(1, 2);
@@ -52,10 +52,10 @@ class ActividadSeeder extends Seeder
                 $pedido = Pedido::create([
                     'user_id' => $cliente->id,
                     'estado' => collect(['pendiente', 'enviado', 'entregado'])->random(),
-                    'total' => 0 // Lo calculamos ahora
+                    'total' => 0
                 ]);
 
-                // Añadimos entre 1 y 3 líneas de productos distintos al pedido
+                // Se añaden entre 1 y 3 líneas de productos distintos al pedido
                 $productosPedido = $productos->random(rand(1, 3));
                 $totalPedido = 0;
 
@@ -70,7 +70,7 @@ class ActividadSeeder extends Seeder
                     $totalPedido += ($prod->precio * $cantidad);
                 }
 
-                // Actualizamos el total real del pedido
+                // Finalmente actualizo el total real del pedido
                 $pedido->update(['total' => $totalPedido]);
             }
         }
